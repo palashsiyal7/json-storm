@@ -31,9 +31,18 @@
         margin-left: 10px;
       }
 
+      .field-badge {
+        margin-right: 8px;
+        margin-bottom: 8px;
+      }
+
       @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
       }
     </style>
   </head>
@@ -42,7 +51,12 @@
       <h1 class="d-flex justify-content-between align-items-center">
         API Testing Tool
         <a href="https://github.com/palashsiyal7/" target="_blank">
-          <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub" width="50" height="50">
+          <img
+            src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+            alt="GitHub"
+            width="50"
+            height="50"
+          />
         </a>
       </h1>
       <!-- MongoDB Configuration -->
@@ -79,6 +93,56 @@
             </button>
           </div>
         </div>
+      </div>
+
+      <div class="mt-4">
+        <h4>Field Mapping</h4>
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <input
+              type="text"
+              class="form-control"
+              id="field-key"
+              placeholder="JSON Key (e.g., 'user')"
+            />
+          </div>
+          <div class="col-md-4">
+            <select class="form-select" id="field-type">
+              <option value="random_string">Random String</option>
+              <option value="random_int">Random Integer</option>
+              <option value="random_float">Random Float</option>
+              <option value="phone_number">Phone Number</option>
+              <option value="contact_number">Contact Number</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <button class="btn btn-secondary w-100" onclick="addField()">
+              Add Field
+            </button>
+          </div>
+          <div class="col-md-2">
+            <button class="btn btn-info w-100" onclick="generateTemplate()">
+              Generate Template
+            </button>
+          </div>
+        </div>
+        <div id="field-list" class="mb-3"></div>
+      </div>
+
+      <div class="mt-4">
+        <h4>JSON Converter</h4>
+        <div class="mb-3">
+          <label class="form-label">Paste JSON Body:</label>
+          <textarea
+            class="form-control"
+            id="json-input"
+            rows="10"
+            placeholder="Paste your JSON here"
+          ></textarea>
+        </div>
+        <button class="btn btn-primary mb-3" onclick="convertJSON()">
+          Convert
+        </button>
       </div>
 
       <!-- Request Configuration -->
@@ -139,7 +203,9 @@ Options:
         </div>
 
         <div class="d-flex align-items-center">
-          <button class="btn btn-success" id="run-test-btn" onclick="runTest()">Run Test</button>
+          <button class="btn btn-success" id="run-test-btn" onclick="runTest()">
+            Run Test
+          </button>
           <div class="loader" id="loader"></div>
         </div>
       </div>
@@ -157,6 +223,122 @@ Options:
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+      `{% raw %}`;
+
+      function convertJSON() {
+        const jsonInput = document.getElementById("json-input").value;
+
+        try {
+          const data = JSON.parse(jsonInput);
+          const converted = convertFields(data);
+          document.getElementById("json-template").value = JSON.stringify(
+            converted,
+            null,
+            4
+          );
+        } catch (e) {
+          alert("Invalid JSON: " + e.message);
+        }
+      }
+
+      function convertFields(obj) {
+        const fieldRules = {
+          // Direct replacements
+          name: () => "{{random_string}}",
+          evv: () => "{{random_int}}",
+          phoneNumber: () => "{{phone_number}}",
+          address: () =>
+            "{{random_string}} {{random_string}} {{random_string}}",
+
+          // Special cases
+          email: (original) => {
+            const [localPart] = original.split("@");
+            return localPart
+              ? "{{random_string}}@" + original.split("@").slice(1).join("@")
+              : original;
+          },
+
+          // Reference fields
+          refrenceNameFirst: () => "{{random_string}}",
+          refrenceNameSecond: () => "{{random_string}}",
+          refrenceNameThird: () => "{{random_string}}",
+          refrenceContactFirst: () => "{{contact_number}}",
+          refrenceContactSecond: () => "{{contact_number}}",
+          refrenceContactThird: () => "{{contact_number}}",
+        };
+
+        return Object.keys(obj).reduce((acc, key) => {
+          const value = obj[key];
+
+          if (fieldRules[key]) {
+            acc[key] = fieldRules[key](value);
+          } else if (typeof value === "object" && value !== null) {
+            acc[key] = convertFields(value); // Handle nested objects
+          } else {
+            acc[key] = value; // Keep original value
+          }
+
+          return acc;
+        }, {});
+      }
+
+      let fields = [];
+
+      function addField() {
+        const key = document.getElementById("field-key").value.trim();
+        const type = document.getElementById("field-type").value;
+
+        if (!key) {
+          alert("Please enter a JSON key");
+          return;
+        }
+
+        // Check for duplicates
+        if (fields.some((f) => f.key === key)) {
+          alert("This key already exists!");
+          return;
+        }
+
+        fields.push({ key, type });
+        updateFieldList();
+        document.getElementById("field-key").value = "";
+      }
+
+      function updateFieldList() {
+        const container = document.getElementById("field-list");
+        container.innerHTML = fields
+          .map(
+            (field, index) => `
+        <div class="badge bg-primary field-badge d-inline-flex align-items-center">
+          ${field.key}: ${field.type}
+          <button 
+            class="btn-close btn-close-white ms-2" 
+            onclick="fields.splice(${index}, 1); updateFieldList()"
+          ></button>
+        </div>
+      `
+          )
+          .join("");
+      }
+
+      function generateTemplate() {
+        if (fields.length === 0) {
+          alert("Add at least one field first!");
+          return;
+        }
+
+        let jsonLines = ["{"];
+        fields.forEach((field, index) => {
+          const isNumber = ["random_int", "random_float"].includes(field.type);
+          const value = isNumber ? `{{${field.type}}}` : `"{{${field.type}}}"`;
+          jsonLines.push(
+            `  "${field.key}": ${value}${index < fields.length - 1 ? "," : ""}`
+          );
+        });
+        jsonLines.push("}");
+
+        document.getElementById("json-template").value = jsonLines.join("\n");
+      }
       function configureMongoDB() {
         const config = {
           connection_string: document.getElementById("mongo-connection").value,
@@ -227,6 +409,7 @@ Options:
             alert("An error occurred: " + error.message);
           });
       }
+      `{% endraw %}`;
     </script>
   </body>
 </html>
