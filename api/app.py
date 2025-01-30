@@ -10,6 +10,9 @@ from serverless_wsgi import handle_request
 
 # app = Flask(__name__)
 
+# template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'templates'))
+# app = Flask(__name__, template_folder=template_dir)
+
 template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'templates'))
 app = Flask(__name__, template_folder=template_dir)
 
@@ -165,5 +168,10 @@ def run_test():
 if __name__ == '__main__':
     app.run(debug=True)
 
-def vercel_handler(event, context):
-    return handle_request(app, event, context)
+# def vercel_handler(event, context):
+#     return handle_request(app, event, context)
+
+app.debug = True
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=3000)

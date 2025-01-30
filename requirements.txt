@@ -4,4 +4,3 @@ requests==2.26.0
 python-dotenv==0.19.2
 serverless-wsgi==3.0.1
 Werkzeug==2.0.3
-python-serverless-wsgi
