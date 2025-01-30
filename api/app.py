@@ -8,7 +8,10 @@ import requests
 import os
 from serverless_wsgi import handle_request
 
-app = Flask(__name__)
+# app = Flask(__name__)
+
+template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'templates'))
+app = Flask(__name__, template_folder=template_dir)
 
 # MongoDB configuration
 mongo_client = None
