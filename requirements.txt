@@ -1,0 +1,5 @@
+Flask==2.0.3
+pymongo==4.1.1
+requests==2.26.0
+python-dotenv==0.19.2
+serverless-wsgi==3.0.1

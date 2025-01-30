@@ -5,6 +5,8 @@ import random
 import string
 import re
 import requests
+import os
+from serverless_wsgi import handle_request
 
 app = Flask(__name__)
 
@@ -159,3 +161,6 @@ def run_test():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+def vercel_handler(event, context):
+    return handle_request(app, event, context)
