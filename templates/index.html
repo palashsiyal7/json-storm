@@ -20,6 +20,21 @@
         padding: 15px;
         border: 1px solid #ddd;
       }
+      .loader {
+        border: 4px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 4px solid #3498db;
+        width: 20px;
+        height: 20px;
+        animation: spin 2s linear infinite;
+        display: none;
+        margin-left: 10px;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
     </style>
   </head>
   <body>
@@ -123,7 +138,10 @@ Options:
           ></textarea>
         </div>
 
-        <button class="btn btn-success" onclick="runTest()">Run Test</button>
+        <div class="d-flex align-items-center">
+          <button class="btn btn-success" id="run-test-btn" onclick="runTest()">Run Test</button>
+          <div class="loader" id="loader"></div>
+        </div>
       </div>
 
       <!-- Results -->
@@ -161,6 +179,11 @@ Options:
       }
 
       function runTest() {
+        const runTestBtn = document.getElementById("run-test-btn");
+        const loader = document.getElementById("loader");
+        runTestBtn.style.display = "none";
+        loader.style.display = "inline-block";
+
         const payload = {
           endpoint: document.getElementById("endpoint").value,
           iterations: parseInt(document.getElementById("iterations").value),
@@ -176,6 +199,8 @@ Options:
         })
           .then((response) => response.json())
           .then((data) => {
+            runTestBtn.style.display = "inline-block";
+            loader.style.display = "none";
             const resultsDiv = document.getElementById("results");
             resultsDiv.innerHTML = "";
 
@@ -195,6 +220,11 @@ Options:
               div.textContent = content;
               resultsDiv.appendChild(div);
             });
+          })
+          .catch((error) => {
+            runTestBtn.style.display = "inline-block";
+            loader.style.display = "none";
+            alert("An error occurred: " + error.message);
           });
       }
     </script>
