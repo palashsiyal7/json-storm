@@ -1,47 +1,69 @@
-How to use:
+# API Testing Tool
 
-    Run the script
+## Overview
+This project is an API Testing Tool that allows users to configure API requests, generate test data, and validate responses. The tool supports MongoDB integration for storing test data and results. It is built using Flask for the backend and a Bootstrap-based frontend.
 
-    Enter the API endpoint URL when prompted
+## Features
+- Generate random test data (integers, floats, strings, phone numbers, etc.)
+- Validate and send API requests
+- Store API responses in MongoDB
+- Simple UI for easy configuration
+- Supports multiple test iterations
 
-    Enter the number of iterations you want
+## Technologies Used
+- **Backend:** Flask, Python
+- **Frontend:** HTML, Bootstrap, JavaScript
+- **Database:** MongoDB (optional)
+- **Libraries:**
+  - Flask
+  - Pymongo
+  - Requests
+  - Random & String (for test data generation)
 
-    Enter your JSON template with placeholders (see below)
+## Installation
+### Prerequisites
+Ensure you have the following installed:
+- Python 3.x
+- MongoDB (if using database storage)
+- Pip (Python package manager)
 
-    Press Enter twice to finish JSON input
+### Setup
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/palashsiyal7/json-storm.git
+   cd json-storm
+   ```
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Run the Flask application:
+   ```bash
+   python app.py
+   ```
+4. Open the frontend in a browser:
+   ```bash
+   http://127.0.0.1:3000
+   ```
 
+## Usage
+1. Configure MongoDB settings (optional) in the UI.
+2. Define test data mappings.
+3. Paste a JSON template for API requests.
+4. Set API endpoint and iterations.
+5. Run tests and view responses.
 
-Example JSON template:
+## Endpoints
+- `/` - Serves the frontend UI.
+- `/configure_mongodb` - Configures MongoDB settings.
+- `/run_test` - Executes API tests.
 
-{
-    "user": "{{random_string}}",
-    "age": {{random_int}},
-    "active": {{boolean}},
-    "uuid": "{{uuid}}",
-    "score": {{random_float}}
-}
+## Contribution
+Feel free to contribute by submitting pull requests or reporting issues on [GitHub](https://github.com/palashsiyal7/json-storm).
 
+## License
+MIT License
 
-Placeholder options:
+---
+**Author:** Palash
 
-    {{random_int}}: Random integer between 1-100
-
-    {{random_float}}: Random float between 0-1
-
-    {{random_string}}: 10-character random string
-
-    {{uuid}}: UUID v4 string
-
-    {{boolean}}: Random boolean (true/false)
-
-Features:
-
-    Validates JSON before sending
-
-    Shows status code and response for each request
-
-    Handles network errors gracefully
-
-    Preserves unknown placeholders in the template
-
-Note: Make sure your JSON template is valid except for the placeholders. The script will automatically convert placeholders to appropriate values based on the placeholder name.
