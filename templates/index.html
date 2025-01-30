@@ -1,227 +1,271 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>API Testing Tool</title>
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
     <style>
-      .container {
-        max-width: 1200px;
-        margin: 20px auto;
+      :root {
+        --primary-color: #4a90e2;
+        --secondary-color: #f8f9fa;
       }
+
+      body {
+        background-color: #f4f6f9;
+      }
+
+      .card-section {
+        margin: 1.5rem 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-radius: 0.5rem;
+      }
+
       .response-log {
         max-height: 400px;
         overflow-y: auto;
-      }
-      .mongodb-section {
-        margin-top: 20px;
-        padding: 15px;
-        border: 1px solid #ddd;
-      }
-      .loader {
-        border: 4px solid #f3f3f3;
-        border-radius: 50%;
-        border-top: 4px solid #3498db;
-        width: 20px;
-        height: 20px;
-        animation: spin 2s linear infinite;
-        display: none;
-        margin-left: 10px;
+        background-color: var(--secondary-color);
+        border-radius: 0.5rem;
       }
 
-      .field-badge {
-        margin-right: 8px;
-        margin-bottom: 8px;
+      .loader {
+        display: none; /* Hide loader initially */
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid var(--primary-color);
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        animation: spin 1s linear infinite;
+      }
+
+      .badge-close {
+        cursor: pointer;
+        margin-left: 0.5rem;
       }
 
       @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      .form-label {
+        font-weight: 500;
+        color: #495057;
+      }
+
+      .section-title {
+        color: var(--primary-color);
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 120px;
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <h1 class="d-flex justify-content-between align-items-center">
-        API Testing Tool
-        <a href="https://github.com/palashsiyal7/" target="_blank">
-          <img
-            src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
-            alt="GitHub"
-            width="50"
-            height="50"
-          />
+    <div class="container py-4">
+      <!-- Header Section -->
+      <header class="d-flex justify-content-between align-items-center mb-5">
+        <h1 class="h3 mb-0">
+          <i class="fas fa-cloud text-primary me-2"></i>API Testing Tool
+        </h1>
+        <a
+          href="https://github.com/palashsiyal7/json-storm"
+          target="_blank"
+          class="btn btn-outline-secondary btn-sm"
+        >
+          <i class="fab fa-github me-2"></i>View on GitHub
         </a>
-      </h1>
-      <!-- MongoDB Configuration -->
-      <div class="mongodb-section">
-        <h4>MongoDB Configuration</h4>
-        <div class="row g-3">
-          <div class="col-md-4">
-            <input
-              type="text"
-              class="form-control"
-              id="mongo-connection"
-              placeholder="Connection String"
-            />
-          </div>
-          <div class="col-md-3">
-            <input
-              type="text"
-              class="form-control"
-              id="mongo-database"
-              placeholder="Database Name"
-            />
-          </div>
-          <div class="col-md-3">
-            <input
-              type="text"
-              class="form-control"
-              id="mongo-collection"
-              placeholder="Collection Name"
-            />
-          </div>
-          <div class="col-md-2">
-            <button class="btn btn-primary w-100" onclick="configureMongoDB()">
-              Connect
-            </button>
+      </header>
+
+      <!-- MongoDB Configuration Card -->
+      <div class="card card-section">
+        <div class="card-body">
+          <h4 class="section-title">
+            <i class="fas fa-database me-2"></i>MongoDB Configuration
+          </h4>
+          <div class="row g-3">
+            <div class="col-12 col-md-6">
+              <input
+                type="text"
+                class="form-control"
+                id="mongo-connection"
+                placeholder="Connection String"
+              />
+            </div>
+            <div class="col-6 col-md-3">
+              <input
+                type="text"
+                class="form-control"
+                id="mongo-database"
+                placeholder="Database Name"
+              />
+            </div>
+            <div class="col-6 col-md-2">
+              <input
+                type="text"
+                class="form-control"
+                id="mongo-collection"
+                placeholder="Collection Name"
+              />
+            </div>
+            <div class="col-12 col-md-1">
+              <button class="btn btn-primary w-100" onclick="configureMongoDB()">
+                <i class="fas fa-link"></i>
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="mt-4">
-        <h4>Field Mapping</h4>
-        <div class="row g-3 mb-3">
-          <div class="col-md-4">
-            <input
-              type="text"
-              class="form-control"
-              id="field-key"
-              placeholder="JSON Key (e.g., 'user')"
-            />
+      <!-- Field Mapping Card -->
+      <div class="card card-section">
+        <div class="card-body">
+          <h4 class="section-title">
+            <i class="fas fa-map-marked me-2"></i>Field Mapping
+          </h4>
+          <div class="row g-3 mb-3">
+            <div class="col-12 col-md-4">
+              <input
+                type="text"
+                class="form-control"
+                id="field-key"
+                placeholder="JSON Key (e.g., 'user')"
+              />
+            </div>
+            <div class="col-12 col-md-4">
+              <select class="form-select" id="field-type">
+                <option value="random_string">Random String</option>
+                <option value="random_int">Random Integer</option>
+                <option value="random_float">Random Float</option>
+                <option value="phone_number">Phone Number</option>
+                <option value="contact_number">Contact Number</option>
+              </select>
+            </div>
+            <div class="col-6 col-md-2">
+              <button class="btn btn-outline-primary w-100" onclick="addField()">
+                <i class="fas fa-plus me-2"></i>Add
+              </button>
+            </div>
+            <div class="col-6 col-md-2">
+              <button class="btn btn-primary w-100" onclick="generateTemplate()">
+                <i class="fas fa-magic me-2"></i>Generate
+              </button>
+            </div>
           </div>
-          <div class="col-md-4">
-            <select class="form-select" id="field-type">
-              <option value="random_string">Random String</option>
-              <option value="random_int">Random Integer</option>
-              <option value="random_float">Random Float</option>
-              <option value="phone_number">Phone Number</option>
-              <option value="contact_number">Contact Number</option>
-            </select>
-          </div>
-          <div class="col-md-2">
-            <button class="btn btn-secondary w-100" onclick="addField()">
-              Add Field
-            </button>
-          </div>
-          <div class="col-md-2">
-            <button class="btn btn-info w-100" onclick="generateTemplate()">
-              Generate Template
-            </button>
-          </div>
+          <div id="field-list" class="d-flex flex-wrap gap-2"></div>
         </div>
-        <div id="field-list" class="mb-3"></div>
       </div>
 
-      <div class="mt-4">
-        <h4>JSON Converter</h4>
-        <div class="mb-3">
-          <label class="form-label">Paste JSON Body:</label>
-          <textarea
-            class="form-control"
-            id="json-input"
-            rows="10"
-            placeholder="Paste your JSON here"
-          ></textarea>
-        </div>
-        <button class="btn btn-primary mb-3" onclick="convertJSON()">
-          Convert
-        </button>
-      </div>
-
-      <!-- Request Configuration -->
-      <div class="mt-4">
-        <h4>Request Configuration</h4>
-        <div class="row g-3 mb-3">
-          <div class="col-md-8">
-            <input
-              type="url"
+      <!-- JSON Converter Card -->
+      <div class="card card-section">
+        <div class="card-body">
+          <h4 class="section-title">
+            <i class="fas fa-exchange-alt me-2"></i>JSON Converter
+          </h4>
+          <div class="mb-3">
+            <label class="form-label">Paste JSON Body:</label>
+            <textarea
               class="form-control"
-              id="endpoint"
-              placeholder="API Endpoint ( http:// or https:// )"
-            />
+              id="json-input"
+              rows="6"
+              placeholder="Paste your JSON here"
+            ></textarea>
           </div>
-          <div class="col-md-2">
-            <input
-              type="number"
-              class="form-control"
-              id="iterations"
-              value="1"
-              min="1"
-              placeholder="Iterations"
-            />
-          </div>
-          <div class="col-md-2 form-check d-flex align-items-center">
-            <input
-              type="checkbox"
-              class="form-check-input"
-              id="mongo-enabled"
-            />
-            <label class="form-check-label ms-2" for="mongo-enabled"
-              >Store in MongoDB</label
-            >
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">JSON Template:</label>
-          <textarea
-            class="form-control"
-            id="json-template"
-            rows="14"
-            placeholder='Example:
-{ 
-    "user": "{{random_string}}", 
-    "age": {{random_int}}, 
-    "active": {{boolean}}, 
-    "uuid": "{{uuid}}", 
-    "score": {{random_float}} 
-}
-Options:
-{{random_int}}: Random integer between 1-100
-{{random_float}}: Random float between 0-1
-{{random_string}}: 10-character random string
-{{uuid}}: UUID v4 string
-{{boolean}}: Random boolean (true/false)'
-          ></textarea>
-        </div>
-
-        <div class="d-flex align-items-center">
-          <button class="btn btn-success" id="run-test-btn" onclick="runTest()">
-            Run Test
+          <button class="btn btn-primary" onclick="convertJSON()">
+            <i class="fas fa-sync me-2"></i>Convert JSON
           </button>
-          <div class="loader" id="loader"></div>
         </div>
       </div>
 
-      <!-- Results -->
-      <div class="mt-4">
-        <h4>Results</h4>
-        <div class="response-log card">
-          <div class="card-body" id="results">
-            <!-- Results will be populated here -->
+      <!-- Request Configuration Card -->
+      <div class="card card-section">
+        <div class="card-body">
+          <h4 class="section-title">
+            <i class="fas fa-sliders-h me-2"></i>Request Configuration
+          </h4>
+          <div class="row g-3 mb-4">
+            <div class="col-12 col-md-8">
+              <input
+                type="url"
+                class="form-control"
+                id="endpoint"
+                placeholder="API Endpoint ( http:// or https:// )"
+              />
+            </div>
+            <div class="col-6 col-md-2">
+              <input
+                type="number"
+                class="form-control"
+                id="iterations"
+                value="1"
+                min="1"
+                placeholder="Iterations"
+              />
+            </div>
+            <div class="col-6 col-md-2 form-check d-flex align-items-center">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="mongo-enabled"
+              />
+              <label class="form-check-label ms-2" for="mongo-enabled">
+                <i class="fas fa-database me-1"></i>Store
+              </label>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">JSON Template:</label>
+            <textarea
+              class="form-control"
+              id="json-template"
+              rows="8"
+              placeholder="Enter your JSON template here..."
+            ></textarea>
+          </div>
+
+          <div class="d-flex align-items-center gap-3">
+            <button class="btn btn-success" id="run-test-btn" onclick="runTest()">
+              <i class="fas fa-play me-2"></i>Run Test
+            </button>
+            <div class="loader" id="loader"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <div class="card card-section">
+        <div class="card-body">
+          <h4 class="section-title">
+            <i class="fas fa-poll me-2"></i>Test Results
+          </h4>
+          <div class="response-log">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Iteration</th>
+                </tr>
+              </thead>
+              <tbody id="results"></tbody>
+            </table>
           </div>
         </div>
       </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
       `{% raw %}`;
 
